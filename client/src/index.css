@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  --color-jet: #0b0b0b;
+  --color-surface: #111111;
+  --color-gold: #d4af37;
+  --color-gold-dim: #b8962e;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth antialiased;
+  }
+  body {
+    @apply bg-jet text-zinc-100 font-sans min-h-screen;
+  }
+  .prose-post {
+    @apply text-zinc-300 leading-relaxed max-w-none;
+  }
+  .prose-post h2 {
+    @apply text-white text-2xl font-semibold mt-10 mb-4;
+  }
+  .prose-post h3 {
+    @apply text-white text-xl font-medium mt-8 mb-3;
+  }
+  .prose-post p {
+    @apply mb-4;
+  }
+  .prose-post ul {
+    @apply list-disc pl-6 mb-4 space-y-2;
+  }
+  .prose-post a {
+    @apply text-gold underline-offset-2 hover:underline;
+  }
+  .prose-post img {
+    @apply my-8 w-full rounded-2xl border border-zinc-800/60 object-cover shadow-xl shadow-black/40;
+    max-height: 520px;
+  }
+  .prose-post blockquote {
+    @apply border-l-4 border-gold/40 pl-4 italic text-zinc-400 my-6;
+  }
+  .prose-post pre {
+    @apply my-6 overflow-x-auto rounded-2xl bg-zinc-900 p-4 text-sm;
+  }
+  .prose-post code {
+    @apply rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-gold;
+  }
+  .prose-post pre code {
+    @apply bg-transparent p-0 text-zinc-300;
+  }
+  .prose-post ol {
+    @apply list-decimal pl-6 mb-4 space-y-2;
+  }
+  .prose-post strong {
+    @apply text-white font-semibold;
+  }
+  .prose-post h1 {
+    @apply text-white text-3xl font-bold mt-12 mb-4;
+  }
+  .prose-post hr {
+    @apply border-zinc-800 my-10;
+  }
+
+  /* ── MDEditor preview pane (admin) ──────────────────────────── */
+  .wmde-markdown {
+    background: transparent !important;
+    color: #d4d4d8 !important;
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 0.9rem !important;
+    line-height: 1.75 !important;
+  }
+  .wmde-markdown img {
+    max-width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(63, 63, 70, 0.6);
+    margin: 1rem 0;
+    display: block;
+  }
+  .wmde-markdown h1,
+  .wmde-markdown h2,
+  .wmde-markdown h3 {
+    color: #ffffff;
+    border-bottom: none;
+  }
+  .wmde-markdown a { color: #d4af37; }
+  .wmde-markdown code {
+    background: rgba(39, 39, 42, 0.9) !important;
+    color: #d4af37 !important;
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+  }
+  .wmde-markdown pre > code {
+    color: #d4d4d8 !important;
+  }
+  .wmde-markdown blockquote {
+    border-left: 3px solid rgba(212, 175, 55, 0.4);
+    color: #a1a1aa;
+    padding-left: 1rem;
+    margin: 1rem 0;
+  }
+
+  .input-field {
+    @apply mt-1 w-full rounded-2xl border border-zinc-800 bg-jet px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 transition-all duration-200 focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    theme(colors.zinc.800 / 80%) 25%,
+    theme(colors.zinc.700 / 60%) 50%,
+    theme(colors.zinc.800 / 80%) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
