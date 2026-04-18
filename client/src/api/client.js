@@ -1,7 +1,16 @@
 import axios from "axios";
 
 const TOKEN_KEY = "qp_admin_token";
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+/** Netlify/Railway: VITE_API_URL must be absolute (https://...). If the scheme is omitted, requests go to the Netlify origin and 404. */
+function resolveApiBase() {
+  const raw = import.meta.env.VITE_API_URL?.trim();
+  if (!raw) return "http://localhost:5000/api";
+  if (/^https?:\/\//i.test(raw)) return raw.replace(/\/+$/, "");
+  return `https://${raw.replace(/^\/+/, "")}`.replace(/\/+$/, "");
+}
+
+const baseURL = resolveApiBase();
 
 export const api = axios.create({
   baseURL,
