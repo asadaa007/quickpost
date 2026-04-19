@@ -99,6 +99,7 @@ function AnimatedRoutes() {
                 <PageTransition><ManageCategories /></PageTransition>
               </Suspense>
             } />
+            <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Route>
         </Routes>
       </AnimatePresence>
