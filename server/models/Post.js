@@ -35,7 +35,6 @@ const postSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-postSchema.index({ slug: 1 });
 postSchema.index({ category: 1 });
 postSchema.index({ tags: 1 });
 postSchema.index({ status: 1 });
