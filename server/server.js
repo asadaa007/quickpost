@@ -75,8 +75,9 @@ if (!mongoUri) {
 
 connectDB(mongoUri)
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`QuickPost API listening on http://localhost:${PORT}`);
+    // Bind on 0.0.0.0 so Railway/Docker proxies can reach the process (localhost-only causes 502).
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`QuickPost API listening on 0.0.0.0:${PORT} (set PORT in Railway — public domain must target this port)`);
     });
   })
   .catch((err) => {
