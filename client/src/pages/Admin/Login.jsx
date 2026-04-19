@@ -108,9 +108,14 @@ export function Login() {
             </form>
           </div>
 
-          <p className="mt-6 text-center text-xs text-zinc-600">
-            First time?{" "}
-            <Link to="/dev-post/register" className="text-gold hover:underline">
+          <p className="mt-6 text-center text-sm">
+            <Link to="/dev-post/forgot-password" className="font-medium text-gold hover:underline">
+              Forgot password?
+            </Link>
+          </p>
+          <p className="mt-3 text-center text-xs text-zinc-600">
+            New site, first admin only?{" "}
+            <Link to="/dev-post/register" className="text-zinc-500 underline decoration-zinc-700 hover:text-gold">
               Create admin account
             </Link>
           </p>

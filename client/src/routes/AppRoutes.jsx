@@ -18,6 +18,8 @@ import { NotFound } from "../pages/NotFound";
 // ── Auth pages ────────────────────────────────────────────────────────────
 import { Login } from "../pages/Admin/Login";
 import { Register } from "../pages/Admin/Register";
+import { ForgotPassword } from "../pages/Admin/ForgotPassword";
+import { ResetPassword } from "../pages/Admin/ResetPassword";
 
 // ── Admin pages (lazy — only loaded when admin route is hit) ──────────────
 const AdminDashboard    = lazy(() => import("../pages/Admin/Dashboard").then((m) => ({ default: m.AdminDashboard })));
@@ -68,6 +70,8 @@ function AnimatedRoutes() {
           {/* Auth — no layout */}
           <Route path="/dev-post/login" element={<Login />} />
           <Route path="/dev-post/register" element={<Register />} />
+          <Route path="/dev-post/forgot-password" element={<ForgotPassword />} />
+          <Route path="/dev-post/reset-password" element={<ResetPassword />} />
 
           {/* Protected admin — lazy loaded */}
           <Route
