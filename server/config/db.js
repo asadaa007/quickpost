@@ -2,9 +2,15 @@ import dns from "dns";
 import mongoose from "mongoose";
 import { ServerApiVersion } from "mongodb";
 
-// Force Node.js to use Google DNS directly — fixes querySrv ECONNREFUSED
-// on systems where the default DNS server doesn't support SRV records.
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// Local dev: Google DNS often fixes Windows / ISP SRV issues for mongodb+srv://
+// Railway: do not force Google DNS (NODE_ENV is often unset); use FORCE_GOOGLE_DNS=true only if you need it.
+const onRailway = Boolean(process.env.RAILWAY_PROJECT_ID || process.env.RAILWAY_ENVIRONMENT);
+const useGoogleDns =
+  process.env.FORCE_GOOGLE_DNS === "true" ||
+  (!onRailway && process.env.NODE_ENV !== "production");
+if (useGoogleDns) {
+  dns.setServers(["8.8.8.8", "8.8.4.4"]);
+}
 dns.setDefaultResultOrder("ipv4first");
 
 export function maskMongoUri(uri) {

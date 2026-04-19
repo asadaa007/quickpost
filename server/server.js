@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import { connectDB } from "./config/db.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
@@ -34,7 +35,10 @@ app.use(
 app.use(express.json({ limit: "2mb" }));
 
 app.get("/api/health", (req, res) => {
-  res.json({ ok: true, service: "quickpost-api" });
+  const s = mongoose.connection.readyState;
+  const mongo =
+    s === 1 ? "connected" : s === 2 ? "connecting" : s === 0 ? "disconnected" : "disconnecting";
+  res.json({ ok: true, service: "quickpost-api", mongo });
 });
 
 app.use("/api/auth", authRoutes);
@@ -75,12 +79,17 @@ if (!mongoUri) {
   process.exit(1);
 }
 
+// Listen immediately so Railway's proxy always has a target (avoids 502 when Mongo is slow or misconfigured).
+// MongoDB connects in the background; /api/health reports `mongo` state for debugging.
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(
+    `[QuickPost] HTTP listening on 0.0.0.0:${PORT} — set Railway Public Networking to this port (see PORT in logs)`
+  );
+});
+
 connectDB(mongoUri)
   .then(() => {
-    // Bind on 0.0.0.0 so Railway/Docker proxies can reach the process (localhost-only causes 502).
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`QuickPost API listening on 0.0.0.0:${PORT} (set PORT in Railway — public domain must target this port)`);
-    });
+    console.log("MongoDB connected");
   })
   .catch((err) => {
     console.error("Failed to connect to MongoDB:", err.message);
@@ -92,12 +101,13 @@ connectDB(mongoUri)
     if (err.message?.includes("ENOTFOUND") || err.message?.includes("querySrv")) {
       console.error(
         "\n--- DNS / querySrv issue (connection never reached Atlas) ---\n" +
-          "1) Windows: set DNS to 8.8.8.8 and 8.8.4.4 (Network adapter → IPv4 → DNS), then: ipconfig /flushdns\n" +
-          "2) Turn VPN off, try phone hotspot, or another Wi‑Fi.\n" +
-          "3) Use a NON-SRV URI from Atlas: Cluster → Connect → MongoDB Compass → copy the mongodb://… string (3 hosts, port 27017).\n" +
-          "   Put it in MONGODB_URI and add your DB name before ?: …/quickpost?… (same user/password).\n" +
-          "4) Corporate/school networks often block SRV DNS — non-SRV string usually works.\n"
+          "1) Atlas → Network Access: allow 0.0.0.0/0 for Railway.\n" +
+          "2) On Railway set NODE_ENV=production (default resolver; avoids forced Google DNS).\n" +
+          "3) Or set FORCE_GOOGLE_DNS=true only if you know you need it.\n" +
+          "4) Try Atlas non-SRV connection string (mongodb:// host list) if SRV keeps failing.\n"
       );
     }
-    process.exit(1);
+    console.error(
+      "[QuickPost] API is up but database is unavailable — fix MONGODB_URI / Atlas; /api/posts will fail until mongo connects."
+    );
   });
