@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { UserPlus } from "lucide-react";
-import { api } from "../../api/client";
+import { register as registerRequest } from "../../services/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/ui/Button";
 
@@ -19,8 +19,8 @@ export function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.post("/auth/register", { email, password });
-      login(res.data.token, res.data.user);
+      const res = await registerRequest({ email, password });
+      login(res.token, res.user);
       toast.success("Admin account created!");
       navigate("/dev-post", { replace: true });
     } catch (err) {
@@ -67,9 +67,9 @@ export function Register() {
                 <input
                   type="password"
                   required
-                  minLength={6}
+                  minLength={8}
                   className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 transition focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30"
-                  placeholder="Minimum 6 characters"
+                  placeholder="Minimum 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />

@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true, minlength: 6 },
+    password: { type: String, required: true, minlength: 8 },
     passwordResetToken: { type: String, default: null },
     passwordResetExpires: { type: Date, default: null },
     role: { type: String, enum: ["admin"], default: "admin" },

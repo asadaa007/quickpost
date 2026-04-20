@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Shield, Eye, EyeOff } from "lucide-react";
-import { api } from "../../api/client";
+import { resetPassword as resetPasswordRequest } from "../../services/auth";
 import { Button } from "../../components/ui/Button";
 
 export function ResetPassword() {
@@ -39,8 +39,8 @@ export function ResetPassword() {
     }
     setLoading(true);
     try {
-      const res = await api.post("/auth/reset-password", { email, token, newPassword });
-      toast.success(res.data?.message || "Password updated");
+      const res = await resetPasswordRequest({ email, token, newPassword });
+      toast.success(res?.message || "Password updated");
       navigate("/dev-post/login", { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.message || "Reset failed");

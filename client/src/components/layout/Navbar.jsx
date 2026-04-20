@@ -3,12 +3,13 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Info, Menu, X, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Modal } from "../ui/Modal";
-import { api } from "../../api/client";
+import { getTopViewedPost } from "../../services/posts";
 
 const STORAGE_KEY = "quickpost-topview-notice";
 
 const NAV_LINKS = [
   { to: "/", label: "Home", end: true },
+  { to: "/posts", label: "All Posts" },
   { to: "/categories", label: "Categories" },
 ];
 
@@ -56,9 +57,8 @@ export function Navbar() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await api.get("/posts/stats/top-viewed");
+        const data = await getTopViewedPost();
         if (cancelled) return;
-        const data = res.data;
         setTopPost(data);
         if (data?.title && !sessionStorage.getItem(STORAGE_KEY)) {
           sessionStorage.setItem(STORAGE_KEY, "1");
@@ -100,9 +100,35 @@ export function Navbar() {
         transition={{ duration: 0.45, ease: "easeOut" }}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 md:px-6">
-          {/* Logo */}
-          <Link to="/" className="shrink-0 text-xl font-bold tracking-tight text-white">
-            <span className="bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">Quick</span>Post
+          {/* Logo + wordmark (logo asset 313×177) */}
+          <Link
+            to="/"
+            aria-label="QuickPost home"
+            className="group flex shrink-0 items-center gap-2.5 text-xl font-bold tracking-tight text-white sm:gap-3 md:gap-3.5"
+          >
+            <span
+              className="relative flex shrink-0 items-center justify-start overflow-hidden"
+              style={{
+                aspectRatio: "313 / 177",
+                height: "clamp(1.625rem, 4.2vw, 2.625rem)",
+              }}
+            >
+              <img
+                src="/logo.png"
+                alt=""
+                role="presentation"
+                width={313}
+                height={177}
+                className="h-full w-full object-contain object-left"
+                decoding="async"
+              />
+            </span>
+            <span className="flex items-center leading-none">
+              <span className="bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent transition group-hover:from-amber-300 group-hover:to-gold">
+                Quick
+              </span>
+              Post
+            </span>
           </Link>
 
           {/* Desktop nav */}

@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { LogIn, Eye, EyeOff } from "lucide-react";
-import { api } from "../../api/client";
+import { login as loginRequest } from "../../services/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/ui/Button";
 
@@ -28,8 +28,8 @@ export function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.post("/auth/login", { email, password });
-      login(res.data.token, res.data.user);
+      const res = await loginRequest({ email, password });
+      login(res.token, res.user);
       toast.success("Welcome back!");
       navigate("/dev-post", { replace: true });
     } catch (err) {

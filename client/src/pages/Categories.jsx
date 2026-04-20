@@ -11,7 +11,7 @@ import { usePosts } from "../hooks/usePosts";
 import { BlogCard } from "../components/blog/BlogCard";
 import { Skeleton, BlogCardSkeleton } from "../components/ui/Skeleton";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
-import { api } from "../api/client";
+import { getTopViewedPost } from "../services/posts";
 import { formatDate } from "../utils/formatDate";
 import { stripMarkdown } from "../utils/stripMarkdown";
 
@@ -61,7 +61,7 @@ function TrendingCard({ post }) {
         <div>
           <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
             <span className="rounded-full bg-zinc-800 px-2.5 py-1 font-medium capitalize text-zinc-300">
-              {post.category?.replace(/-/g, " ")}
+              {(post.category || "uncategorized").replace(/-/g, " ")}
             </span>
             {post.createdAt && <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDate(post.createdAt)}</span>}
             {post.views > 0 && <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{post.views.toLocaleString()} reads</span>}
@@ -103,8 +103,8 @@ export function Categories() {
 
   useEffect(() => {
     let cancelled = false;
-    api.get("/posts/stats/top-viewed")
-      .then((res) => { if (!cancelled) setTrending(res.data); })
+    getTopViewedPost()
+      .then((data) => { if (!cancelled) setTrending(data); })
       .catch(() => {})
       .finally(() => { if (!cancelled) setTrendingLoading(false); });
     return () => { cancelled = true; };

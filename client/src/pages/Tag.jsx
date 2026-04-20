@@ -8,22 +8,21 @@ import { BlogCardSkeleton } from "../components/ui/Skeleton";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
 import { Button } from "../components/ui/Button";
 
-export function Category() {
+export function Tag() {
   const { slug } = useParams();
+  const tag = slug ? decodeURIComponent(slug) : "";
   const [page, setPage] = useState(1);
-  const { data, loading, error } = usePosts({ category: slug, page, limit: 12 });
+  const { data, loading, error } = usePosts({ tag, page, limit: 12 });
 
   const items = data?.items || [];
   const pages = data?.pages || 1;
   const total = data?.total || 0;
-  const title =
-    slug === "uncategorized"
-      ? "Uncategorized"
-      : slug?.replace(/-/g, " ") || "Category";
 
   return (
     <>
-      <Helmet><title>{title} — QuickPost</title></Helmet>
+      <Helmet>
+        <title>{tag ? `#${tag} — QuickPost` : "Tag — QuickPost"}</title>
+      </Helmet>
       <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -31,10 +30,12 @@ export function Category() {
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <p className="text-sm text-zinc-500">
-            <Link to="/categories" className="hover:text-gold">Categories</Link>{" "}
-            / <span className="text-zinc-300">{slug}</span>
+            <Link to="/" className="hover:text-gold">Home</Link>
+            {" "}/ <span className="text-zinc-300">Tag</span>
           </p>
-          <h1 className="mt-4 text-3xl font-bold capitalize text-white">{title}</h1>
+          <h1 className="mt-4 text-3xl font-bold text-white">
+            {tag ? <span className="text-gold">#{tag}</span> : "Posts by tag"}
+          </h1>
           {total > 0 && !loading && (
             <p className="mt-1 text-sm text-zinc-500">{total} post{total !== 1 ? "s" : ""}</p>
           )}
@@ -54,8 +55,8 @@ export function Category() {
               ))}
         </div>
 
-        {!loading && items.length === 0 && !error && (
-          <p className="mt-10 text-zinc-500">No posts in this category yet.</p>
+        {!loading && items.length === 0 && !error && tag && (
+          <p className="mt-10 text-zinc-500">No posts with this tag yet.</p>
         )}
 
         {pages > 1 && (

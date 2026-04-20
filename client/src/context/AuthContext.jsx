@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useState } from "react";
-import { api } from "../api/client";
+import { fetchMe } from "../services/auth";
 
 const AuthContext = createContext(null);
 
@@ -16,8 +16,8 @@ export function AuthProvider({ children }) {
     let cancelled = false;
     (async () => {
       try {
-        const res = await api.get("/auth/me");
-        if (!cancelled) setUser(res.data);
+        const me = await fetchMe();
+        if (!cancelled) setUser(me);
       } catch {
         if (!cancelled) { setToken(null); localStorage.removeItem(TOKEN_KEY); }
       } finally {

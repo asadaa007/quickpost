@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { Trash2, Plus, Tag } from "lucide-react";
-import { api } from "../../api/client";
+import { createCategory, deleteCategory as deleteCategoryApi } from "../../services/admin";
 import { Button } from "../../components/ui/Button";
 import { useCategories } from "../../hooks/useCategories";
 import { Skeleton } from "../../components/ui/Skeleton";
@@ -27,7 +27,7 @@ export function ManageCategories() {
       if (!name.trim()) return;
       setCreating(true);
       try {
-        await api.post("/categories", { name: name.trim(), slug: slug.trim() || slugify(name.trim()) });
+        await createCategory({ name: name.trim(), slug: slug.trim() || slugify(name.trim()) });
         toast.success(`"${name.trim()}" created`);
         setName("");
         setSlug("");
@@ -46,7 +46,7 @@ export function ManageCategories() {
       if (!confirm(`Delete "${cat.name}"? Posts using this category won't be deleted.`)) return;
       setDeletingId(cat._id);
       try {
-        await api.delete(`/categories/${cat._id}`);
+        await deleteCategoryApi(cat._id);
         toast.success(`"${cat.name}" deleted`);
         refetch();
       } catch (err) {

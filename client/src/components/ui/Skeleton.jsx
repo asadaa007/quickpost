@@ -27,17 +27,23 @@ export function BlogCardSkeleton() {
 
 export function PostSkeleton() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 md:px-6">
-      <Skeleton className="mb-4 h-4 w-28" />
-      <Skeleton className="mb-4 h-10 w-full" />
-      <Skeleton className="mb-2 h-10 w-3/4" />
-      <Skeleton className="mb-8 h-4 w-40" />
-      <Skeleton className="mb-12 aspect-[16/7] w-full" />
-      <div className="space-y-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className={`h-4 ${i % 4 === 3 ? "w-2/3" : "w-full"}`} />
-        ))}
+    <article>
+      <Skeleton className="aspect-[21/8] w-full rounded-none md:rounded-b-2xl" />
+      <div className="mx-auto max-w-5xl px-4 py-12 md:px-8">
+        <div className="mb-6 flex flex-wrap gap-3">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+        <Skeleton className="mb-4 h-12 w-full max-w-3xl" />
+        <Skeleton className="mb-8 h-12 w-2/3 max-w-2xl" />
+        <div className="my-10 h-px w-full bg-zinc-800/80" />
+        <div className="space-y-3">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <Skeleton key={i} className={`h-4 ${i % 5 === 4 ? "w-2/3" : "w-full"}`} />
+          ))}
+        </div>
       </div>
-    </div>
+    </article>
   );
 }

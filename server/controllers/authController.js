@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { Resend } from "resend";
 import User from "../models/User.js";
+import { sendServerError } from "../utils/httpErrors.js";
 
 function hashResetToken(token) {
   return crypto.createHash("sha256").update(token).digest("hex");
@@ -18,22 +20,23 @@ async function sendResetEmailResend({ to, resetUrl }) {
   const key = process.env.RESEND_API_KEY?.trim();
   const from = process.env.RESEND_FROM_EMAIL?.trim() || "QuickPost <onboarding@resend.dev>";
   if (!key) return { sent: false };
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
+  try {
+    const resend = new Resend(key);
+    const { error } = await resend.emails.send({
       from,
       to: [to],
       subject: "Reset your QuickPost admin password",
       html: `<p>Reset your password (link expires in 1 hour):</p><p><a href="${resetUrl}">Set a new password</a></p><p style="font-size:12px;color:#666">${resetUrl}</p>`,
-    }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("[QuickPost] Resend API error:", res.status, text);
+    });
+    if (error) {
+      console.error("[QuickPost] Resend error:", error);
+      return { sent: false };
+    }
+    return { sent: true };
+  } catch (e) {
+    console.error("[QuickPost] Resend send failed:", e);
     return { sent: false };
   }
-  return { sent: true };
 }
 
 function signToken(user) {
@@ -50,7 +53,9 @@ export async function register(req, res) {
     if (!email || !password) {
       return res.status(400).json({ message: "email and password are required" });
     }
-    // Only allow first-time registration when no admin exists
+    if (String(password).length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
     const existing = await User.countDocuments();
     if (existing > 0) {
       return res.status(403).json({
@@ -64,7 +69,7 @@ export async function register(req, res) {
     if (err.code === 11000) {
       return res.status(409).json({ message: "Email already registered" });
     }
-    res.status(500).json({ message: err.message || "Registration failed" });
+    sendServerError(res, err, "Registration failed");
   }
 }
 
@@ -81,7 +86,7 @@ export async function login(req, res) {
     const token = signToken(user);
     res.json({ token, user: { id: user._id, email: user.email, role: user.role } });
   } catch (err) {
-    res.status(500).json({ message: err.message || "Login failed" });
+    sendServerError(res, err, "Login failed");
   }
 }
 
@@ -126,7 +131,7 @@ export async function forgotPassword(req, res) {
     }
     res.json(body);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Request failed" });
+    sendServerError(res, err, "Request failed");
   }
 }
 
@@ -160,6 +165,6 @@ export async function resetPassword(req, res) {
 
     res.json({ message: "Password updated. You can sign in with your new password." });
   } catch (err) {
-    res.status(500).json({ message: err.message || "Reset failed" });
+    sendServerError(res, err, "Reset failed");
   }
 }

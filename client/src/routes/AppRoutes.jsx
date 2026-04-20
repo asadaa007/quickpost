@@ -13,6 +13,8 @@ import { Categories } from "../pages/Categories";
 import { Category } from "../pages/Category";
 import { Post } from "../pages/Post";
 import { Search } from "../pages/Search";
+import { Tag } from "../pages/Tag";
+import { AllPosts } from "../pages/AllPosts";
 import { NotFound } from "../pages/NotFound";
 
 // ── Auth pages ────────────────────────────────────────────────────────────
@@ -63,7 +65,9 @@ function AnimatedRoutes() {
             <Route path="/categories" element={<PageTransition><Categories /></PageTransition>} />
             <Route path="/category/:slug" element={<PageTransition><Category /></PageTransition>} />
             <Route path="/post/:slug" element={<PageTransition><Post /></PageTransition>} />
+            <Route path="/posts" element={<PageTransition><AllPosts /></PageTransition>} />
             <Route path="/search" element={<PageTransition><Search /></PageTransition>} />
+            <Route path="/tag/:slug" element={<PageTransition><Tag /></PageTransition>} />
             <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Route>
 

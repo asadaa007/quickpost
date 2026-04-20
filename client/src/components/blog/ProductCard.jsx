@@ -73,11 +73,11 @@ export function ProductCard({ product }) {
             whileTap={{ scale: 0.97 }}
           >
             <Button type="button">
-              {product.affiliateLink.includes("amazon.") ? "View Product" : "View Product"}
+              {product.affiliateLink.toLowerCase().includes("amazon") ? "Buy on Amazon" : "View Product"}
             </Button>
           </motion.a>
         ) : (
-          <p className="mt-6 text-sm text-zinc-500">Affiliate link coming soon</p>
+          <p className="mt-6 text-sm text-zinc-500">Purchase link coming soon</p>
         )}
       </div>
     </motion.div>

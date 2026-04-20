@@ -8,6 +8,10 @@ const productSchema = new mongoose.Schema(
     features: [{ type: String }],
     pros: [{ type: String }],
     cons: [{ type: String }],
+    /** Conversion / automation-friendly optional fields */
+    bestFor: { type: String, default: "", trim: true },
+    price: { type: String, default: "", trim: true },
+    rating: { type: Number, min: 0, max: 5 },
   },
   { _id: false }
 );
@@ -40,5 +44,6 @@ postSchema.index({ tags: 1 });
 postSchema.index({ status: 1 });
 postSchema.index({ createdAt: -1 });
 postSchema.index({ status: 1, createdAt: -1 });
+postSchema.index({ status: 1, views: -1, createdAt: -1 });
 
 export default mongoose.model("Post", postSchema);

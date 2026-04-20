@@ -16,16 +16,16 @@
     @apply bg-jet text-zinc-100 font-sans min-h-screen;
   }
   .prose-post {
-    @apply text-zinc-300 leading-relaxed max-w-none;
+    @apply text-zinc-300 text-[1.05rem] leading-[1.75] max-w-none;
   }
   .prose-post h2 {
-    @apply text-white text-2xl font-semibold mt-10 mb-4;
+    @apply text-white text-3xl font-semibold tracking-tight mt-12 mb-5 scroll-mt-28;
   }
   .prose-post h3 {
-    @apply text-white text-xl font-medium mt-8 mb-3;
+    @apply text-white text-2xl font-semibold tracking-tight mt-10 mb-4 scroll-mt-28;
   }
   .prose-post p {
-    @apply mb-4;
+    @apply mb-5;
   }
   .prose-post ul {
     @apply list-disc pl-6 mb-4 space-y-2;
@@ -56,7 +56,7 @@
     @apply text-white font-semibold;
   }
   .prose-post h1 {
-    @apply text-white text-3xl font-bold mt-12 mb-4;
+    @apply text-white text-4xl font-bold mt-14 mb-5 scroll-mt-28;
   }
   .prose-post hr {
     @apply border-zinc-800 my-10;

@@ -2,7 +2,8 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { LayoutDashboard, PenLine, FileText, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
-import { api } from "../../api/client";
+import { listPostsAdmin } from "../../services/admin";
+import { listCategories } from "../../services/categories";
 
 export function AdminDashboard() {
   const [counts, setCounts] = useState({ posts: "—", categories: "—" });
@@ -11,14 +12,14 @@ export function AdminDashboard() {
     let cancelled = false;
     (async () => {
       try {
-        const [postsRes, catRes] = await Promise.all([
-          api.get("/posts/admin/all", { params: { limit: 1 } }),
-          api.get("/categories"),
+        const [postsRes, cats] = await Promise.all([
+          listPostsAdmin({ limit: 1 }),
+          listCategories(),
         ]);
         if (!cancelled) {
           setCounts({
-            posts: postsRes.data?.total ?? 0,
-            categories: Array.isArray(catRes.data) ? catRes.data.length : 0,
+            posts: postsRes?.total ?? 0,
+            categories: Array.isArray(cats) ? cats.length : 0,
           });
         }
       } catch {
@@ -94,11 +95,11 @@ export function AdminDashboard() {
         <div className="mt-8 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">API access</p>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Protected routes require{" "}
+            Sign in to the admin panel, then the app sends{" "}
             <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-gold">
-              Authorization: Bearer &lt;API_SECRET_KEY&gt;
+              Authorization: Bearer &lt;JWT&gt;
             </code>{" "}
-            header. Base URL:{" "}
+            automatically. Base URL:{" "}
             <code className="text-zinc-300">
               {import.meta.env.VITE_API_URL || "http://localhost:5000/api"}
             </code>

@@ -3,13 +3,23 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import MDEditor from "@uiw/react-md-editor";
-import { api } from "../../api/client";
+import { createPost as createPostApi, getPostAdminById, updatePost as updatePostApi } from "../../services/admin";
 import { Button } from "../../components/ui/Button";
 import { useCategories } from "../../hooks/useCategories";
 import { slugify } from "../../utils/slugify";
 import { Plus, Trash2, PenLine } from "lucide-react";
 
-const emptyProduct = () => ({ title: "", image: "", affiliateLink: "", features: "", pros: "", cons: "" });
+const emptyProduct = () => ({
+  title: "",
+  image: "",
+  affiliateLink: "",
+  features: "",
+  pros: "",
+  cons: "",
+  bestFor: "",
+  rating: "",
+  price: "",
+});
 
 function splitLines(s) {
   if (!s || !String(s).trim()) return [];
@@ -36,8 +46,7 @@ export function CreatePost() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await api.get(`/posts/admin/post/${id}`);
-        const p = res.data;
+        const p = await getPostAdminById(id);
         if (cancelled) return;
         setTitleTouched(true);
         setForm({
@@ -52,10 +61,15 @@ export function CreatePost() {
           tags: (p.tags || []).join(", "),
           products: p.products?.length > 0
             ? p.products.map((pr) => ({
-                title: pr.title || "", image: pr.image || "", affiliateLink: pr.affiliateLink || "",
+                title: pr.title || "",
+                image: pr.image || "",
+                affiliateLink: pr.affiliateLink || "",
                 features: (pr.features || []).join("\n"),
                 pros: (pr.pros || []).join("\n"),
                 cons: (pr.cons || []).join("\n"),
+                bestFor: pr.bestFor || "",
+                price: pr.price || "",
+                rating: pr.rating != null && pr.rating !== "" ? String(pr.rating) : "",
               }))
             : [emptyProduct()],
         });
@@ -100,18 +114,25 @@ export function CreatePost() {
       tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
       seo: { metaTitle: form.metaTitle, metaDescription: form.metaDescription },
       products: form.products.map((pr) => ({
-        title: pr.title, image: pr.image, affiliateLink: pr.affiliateLink,
-        features: splitLines(pr.features), pros: splitLines(pr.pros), cons: splitLines(pr.cons),
+        title: pr.title,
+        image: pr.image,
+        affiliateLink: pr.affiliateLink,
+        features: splitLines(pr.features),
+        pros: splitLines(pr.pros),
+        cons: splitLines(pr.cons),
+        bestFor: pr.bestFor?.trim() || undefined,
+        price: pr.price?.trim() || undefined,
+        rating: pr.rating === "" || pr.rating == null ? undefined : Number(pr.rating),
       })),
     };
 
     setSaving(true);
     try {
       if (isEdit) {
-        await api.put(`/posts/${id}`, payload);
+        await updatePostApi(id, payload);
         toast.success("Post updated");
       } else {
-        await api.post("/posts", payload);
+        await createPostApi(payload);
         toast.success("Post created");
       }
       navigate("/dev-post/posts");
@@ -224,7 +245,7 @@ export function CreatePost() {
                     <Field label="Image URL">
                       <input className="input-field" placeholder="https://..." value={pr.image} onChange={(e) => updateProduct(i, "image", e.target.value)} />
                     </Field>
-                    <Field label="Affiliate link">
+                    <Field label="Where to buy (URL)">
                       <input className="input-field" placeholder="https://..." value={pr.affiliateLink} onChange={(e) => updateProduct(i, "affiliateLink", e.target.value)} />
                     </Field>
                   </div>
@@ -237,6 +258,35 @@ export function CreatePost() {
                     </Field>
                     <Field label="Cons (one per line)">
                       <textarea className="input-field min-h-[72px] text-sm" value={pr.cons} onChange={(e) => updateProduct(i, "cons", e.target.value)} />
+                    </Field>
+                  </div>
+                  <div className="mt-4 grid gap-4 md:grid-cols-3">
+                    <Field label="Best for (optional)">
+                      <input
+                        className="input-field"
+                        placeholder="e.g. creators, travel, budget buyers"
+                        value={pr.bestFor}
+                        onChange={(e) => updateProduct(i, "bestFor", e.target.value)}
+                      />
+                    </Field>
+                    <Field label="Price (optional)">
+                      <input
+                        className="input-field"
+                        placeholder="e.g. $99 or from $49"
+                        value={pr.price}
+                        onChange={(e) => updateProduct(i, "price", e.target.value)}
+                      />
+                    </Field>
+                    <Field label="Rating 0–5 (optional)">
+                      <input
+                        className="input-field"
+                        type="number"
+                        min={0}
+                        max={5}
+                        step={0.1}
+                        value={pr.rating}
+                        onChange={(e) => updateProduct(i, "rating", e.target.value)}
+                      />
                     </Field>
                   </div>
                 </div>

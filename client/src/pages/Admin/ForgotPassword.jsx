@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { KeyRound, ArrowLeft } from "lucide-react";
-import { api } from "../../api/client";
+import { forgotPassword as forgotPasswordRequest } from "../../services/auth";
 import { Button } from "../../components/ui/Button";
 
 export function ForgotPassword() {
@@ -17,9 +17,9 @@ export function ForgotPassword() {
     setLoading(true);
     setResetUrl("");
     try {
-      const res = await api.post("/auth/forgot-password", { email });
-      if (res.data?.resetUrl) {
-        setResetUrl(res.data.resetUrl);
+      const res = await forgotPasswordRequest({ email });
+      if (res?.resetUrl) {
+        setResetUrl(res.resetUrl);
         toast.success("Reset link is shown below (dev mode).");
       } else {
         toast.success(

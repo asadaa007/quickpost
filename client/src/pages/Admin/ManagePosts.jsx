@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FileText, PenLine, Pencil, Trash2, Eye } from "lucide-react";
-import { api } from "../../api/client";
+import { deletePost as deletePostApi, listPostsAdmin } from "../../services/admin";
 import { Button } from "../../components/ui/Button";
 import { formatDate } from "../../utils/formatDate";
 
@@ -17,10 +17,10 @@ export function ManagePosts() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get("/posts/admin/all", { params: { page, limit: 20 } });
-      setItems(res.data.items || []);
-      setPages(res.data.pages || 1);
-      setTotal(res.data.total || 0);
+      const res = await listPostsAdmin({ page, limit: 20 });
+      setItems(res.items || []);
+      setPages(res.pages || 1);
+      setTotal(res.total || 0);
     } catch (e) {
       toast.error(e.response?.data?.message || "Failed to load posts");
       setItems([]);
@@ -34,7 +34,7 @@ export function ManagePosts() {
   const remove = async (id) => {
     if (!confirm("Delete this post permanently?")) return;
     try {
-      await api.delete(`/posts/${id}`);
+      await deletePostApi(id);
       toast.success("Post deleted");
       load();
     } catch (e) {

@@ -12,13 +12,19 @@ function readTime(content) {
 
 export function BlogCard({ post }) {
   const navigate = useNavigate();
-  const raw = useMemo(() => stripMarkdown(post.content || ""), [post.content]);
+  const raw = useMemo(
+    () => stripMarkdown(post.content || post.seo?.metaDescription || ""),
+    [post.content, post.seo?.metaDescription]
+  );
   const excerpt = raw.slice(0, 140) || "Read insights and product picks curated for you.";
   const mins = useMemo(() => readTime(post.content), [post.content]);
+  const categorySlug = post.category || "uncategorized";
+  const categoryLabel =
+    categorySlug === "uncategorized" ? "Uncategorized" : categorySlug.replace(/-/g, " ");
 
   const handleTagClick = (e, tag) => {
     e.preventDefault();
-    navigate(`/search?q=${encodeURIComponent(tag)}`);
+    navigate(`/tag/${encodeURIComponent(tag)}`);
   };
 
   return (
@@ -50,8 +56,8 @@ export function BlogCard({ post }) {
               No image
             </div>
           )}
-          <span className="absolute capitalize left-3 top-3 rounded-full bg-jet/80 px-3 py-1 text-xs font-medium text-gold ring-1 ring-gold/30 backdrop-blur">
-            {post.category}
+          <span className="absolute left-3 top-3 rounded-full bg-jet/80 px-3 py-1 text-xs font-medium capitalize text-gold ring-1 ring-gold/30 backdrop-blur">
+            {categoryLabel}
           </span>
         </div>
 

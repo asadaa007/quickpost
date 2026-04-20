@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api } from "../api/client";
+import { listCategories } from "../services/categories";
 
 export function useCategories() {
   const [data, setData] = useState([]);
@@ -10,8 +10,8 @@ export function useCategories() {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get("/categories");
-      setData(res.data || []);
+      const res = await listCategories();
+      setData(Array.isArray(res) ? res : []);
     } catch (e) {
       setError(e.response?.data?.message || e.message || "Failed to load categories");
       setData([]);
