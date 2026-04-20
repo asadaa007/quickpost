@@ -94,7 +94,7 @@ export function Home() {
       toast.error("Enter your email");
       return;
     }
-    toast.success("Thanks — you are on the list (preview only).");
+    toast.success("Thank you—we will keep you posted.");
     setNewsletterEmail("");
   };
 
@@ -351,16 +351,17 @@ export function Home() {
           >
             <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 rounded-full bg-gold/15 blur-3xl" />
             <div className="relative mx-auto max-w-2xl text-center">
-              <h2 className="text-2xl font-semibold text-white md:text-3xl">Get the best product insights weekly</h2>
-              <p className="mt-3 text-sm text-zinc-400 md:text-base">
-                UI preview only—no emails are stored yet. Drop your address to see the experience.
+              <h2 className="text-2xl font-semibold text-white md:text-3xl">Join the QuickPost digest</h2>
+              <p className="mt-3 text-sm leading-relaxed text-zinc-400 md:text-base">
+                Get weekly highlights—new guides, sharp comparisons, and editor-approved finds. One focused email; no
+                clutter, and you can leave anytime.
               </p>
               <form onSubmit={onNewsletter} className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <input
                   type="email"
                   name="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder="Your email address"
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
                   className="input-field sm:max-w-xs sm:flex-1"
