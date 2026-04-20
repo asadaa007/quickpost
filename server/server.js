@@ -17,6 +17,10 @@ const PORT = Number(process.env.PORT) || 5000;
 // Railway sets PORT — Public Networking "target port" must match this value (see deploy logs).
 console.log(`[QuickPost] PORT=${PORT} (${process.env.PORT ? "from Railway/env" : "default for local"})`);
 
+// Railway (and most hosts) run your app behind a proxy and set X-Forwarded-For.
+// Required for correct IP detection (rate limiting, logging) and avoids express-rate-limit validation errors.
+app.set("trust proxy", 1);
+
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((o) => o.trim())
   : [];
