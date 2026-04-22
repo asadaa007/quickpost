@@ -158,7 +158,7 @@ export function Home() {
                 <span className="relative z-10">Explore top products</span>
               </Button>
             </Link>
-            <Link to="#latest-posts">
+            <Link to="/#latest-posts">
               <Button variant="ghost" className="border-gold/20 hover:border-gold/40 hover:shadow-[0_0_20px_-6px_rgba(212,175,55,0.35)]">
                 Start reading
               </Button>

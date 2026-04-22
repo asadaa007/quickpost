@@ -250,7 +250,7 @@ export function Categories() {
                 <h2 className="text-2xl font-semibold text-white">Recent Posts</h2>
               </div>
               <Link
-                to="/"
+                to="/posts"
                 className="flex items-center gap-1.5 text-sm text-zinc-400 transition hover:text-gold"
               >
                 View all <ArrowRight className="h-4 w-4" />
